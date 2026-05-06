@@ -29,6 +29,8 @@
         html { scroll-behavior: smooth; }
         .product-card:hover .img-container { transform: scale(1.02); }
         .img-container { transition: transform 0.3s ease; }
+        .hero-img { transition: all 0.5s ease; }
+        .hero-img:hover { transform: translateY(-5px); filter: brightness(1.1); }
     </style>
 </head>
 <body class="bg-varin-light text-gray-800 font-sans antialiased">
@@ -57,14 +59,46 @@
     </nav>
 
     <!-- Hero Section -->
-    <div class="bg-varin-primary text-white py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Descubre el Confort Inteligente</h1>
-            <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-                Catálogo informativo detallado de los productos Varin®. Transforma tu casa en un verdadero hogar inteligente con nuestra plataforma operada mediante WiFi y la aplicación Tuya.
-            </p>
-            <div class="inline-flex items-center text-sm font-medium bg-white/10 px-4 py-2 rounded-full">
-                <i class="fas fa-info-circle mr-2 text-varin-accent"></i> Guía técnica de productos sin fines comerciales
+    <div class="bg-varin-primary text-white py-16 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Text Column -->
+                <div class="text-center lg:text-left">
+                    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">Descubre el Confort Inteligente</h1>
+                    <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto lg:mx-0">
+                        Catálogo informativo detallado de los productos Varin®. Transforma tu casa en un verdadero hogar inteligente con nuestra plataforma operada mediante WiFi y la aplicación Tuya.
+                    </p>
+                    <div class="inline-flex items-center text-sm font-medium bg-white/10 px-4 py-2 rounded-full mb-8">
+                        <i class="fas fa-info-circle mr-2 text-varin-accent"></i> Guía técnica de productos sin fines comerciales
+                    </div>
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-4">
+                        <a href="#iluminacion" class="px-8 py-3 bg-varin-accent hover:bg-cyan-600 text-white font-bold rounded-full transition-all shadow-lg transform hover:-translate-y-1">Ver Productos</a>
+                        <a href="#tuya" class="px-8 py-3 bg-white/10 hover:bg-white/20 text-white font-bold rounded-full transition-all border border-white/20">Saber más</a>
+                    </div>
+                </div>
+
+                <!-- Image Grid Column -->
+                <div class="grid grid-cols-2 gap-4 relative">
+                    <!-- Background Glow -->
+                    <div class="absolute -inset-4 bg-varin-accent/20 blur-3xl rounded-full"></div>
+                    
+                    <div class="space-y-4">
+                        <div class="hero-img bg-white rounded-2xl p-2 shadow-xl aspect-square overflow-hidden flex items-center justify-center relative z-10">
+                            <img src="https://http2.mlstatic.com/D_NQ_NP_2X_759518-MLC109634807804_042026-F.webp" alt="Producto Varin 1" class="w-full h-full object-contain rounded-xl">
+                        </div>
+                        <div class="hero-img bg-white rounded-2xl p-2 shadow-xl aspect-square overflow-hidden flex items-center justify-center relative z-10 translate-x-4">
+                            <img src="https://http2.mlstatic.com/D_NQ_NP_2X_796775-MLC109635086294_042026-F-ventilador-de-techo-varin-tuya-wifi.webp" alt="Producto Varin 3" class="w-full h-full object-contain rounded-xl">
+                        </div>
+                    </div>
+                    <div class="space-y-4 pt-8">
+                        <div class="hero-img bg-white rounded-2xl p-2 shadow-xl aspect-square overflow-hidden flex items-center justify-center relative z-10">
+                            <img src="https://http2.mlstatic.com/D_NQ_NP_2X_949036-MLC109634811164_042026-F.webp" alt="Producto Varin 2" class="w-full h-full object-contain rounded-xl">
+                        </div>
+                        <div class="hero-img bg-white rounded-2xl p-2 shadow-xl aspect-square overflow-hidden flex items-center justify-center relative z-10 -translate-x-4">
+                            <img src="https://http2.mlstatic.com/D_NQ_NP_2X_994321-MLC111191644601_052026-F.webp" alt="Producto Varin 4" class="w-full h-full object-contain rounded-xl">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -140,65 +174,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Product 3 -->
-                <div class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
-                    <div class="md:flex h-full">
-                        <div class="md:w-2/5 bg-gray-50 p-8 flex items-center justify-center border-r border-gray-100 overflow-hidden">
-                            <div class="w-full aspect-square bg-gray-200 rounded-xl flex items-center justify-center text-gray-500 italic text-center p-6 img-container shadow-inner border border-gray-300/50">
-                                <img src="https://varin.nl/cdn/shop/files/Plafondventilator_hout_metverlichtingzwart_edits2_2400x2400_crop_center.jpg?v=1764144895" alt="Ventilador 132cm" class="w-full h-full object-contain mix-blend-multiply rounded-xl">
-                            </div>
-                        </div>
-                        <div class="md:w-3/5 p-8 flex flex-col justify-center">
-                            <div class="uppercase tracking-wide text-xs text-varin-accent font-bold mb-2">Ø 132 cm | Gran Formato | WiFi</div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-4 leading-tight">Ventilador de techo inteligente negro con iluminación</h3>
-                            <p class="text-gray-600 mb-6 text-sm leading-relaxed">
-                                Diseñado para dominar espacios más amplios como salas de estar grandes, comedores o terrazas cubiertas. Con sus impresionantes 132 cm de diámetro, sus aspas mueven un gran volumen de aire a bajas revoluciones, garantizando un funcionamiento casi imperceptible. Incorpora un núcleo de iluminación inteligente y control total de sus funciones a través de tu red WiFi doméstica.
-                            </p>
-                            <ul class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-sm text-gray-700">
-                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i> <span><strong>Cobertura:</strong> Tamaño ideal para estancias amplias y de techos altos.</span></li>
-                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i> <span><strong>Motor:</strong> Tecnología de corriente continua (DC) altamente eficiente y duradera.</span></li>
-                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i> <span><strong>Luminaria:</strong> Panel LED integrado, ajustable en temperatura e intensidad.</span></li>
-                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i> <span><strong>Automatización:</strong> Programación de apagado nocturno o encendido basado en la temperatura.</span></li>
-                            </ul>
-                            <div class="mt-6">
-                                <a href="https://www.mercadolibre.cl/pagina/varinlatam" target="_blank" class="inline-flex items-center px-6 py-2.5 bg-varin-accent text-white text-sm font-bold rounded-full hover:bg-blue-600 transition-colors shadow-sm">
-                                    <i class="fas fa-shopping-cart mr-2"></i> Comprar
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product 4 -->
-                <div class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
-                    <div class="md:flex h-full">
-                        <div class="md:w-2/5 bg-amber-50 p-8 flex items-center justify-center border-r border-amber-100 overflow-hidden order-last md:order-first">
-                            <div class="w-full aspect-square bg-[#e6d5b8] rounded-xl flex items-center justify-center text-amber-900 italic text-center p-6 img-container shadow-inner border border-[#d4b88a]">
-                                <img src="https://varin.nl/cdn/shop/files/VarinPlafondlampmetventilatorzwart-2_1200x1200_crop_center.png?v=1764143691" alt="Lámpara Bambú" class="w-full h-full object-contain mix-blend-multiply rounded-xl">
-                            </div>
-                        </div>
-                        <div class="md:w-3/5 p-8 flex flex-col justify-center">
-                            <div class="uppercase tracking-wide text-xs text-amber-600 font-bold mb-2">Diseño Natural | Tuya | Bambú</div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-4 leading-tight">Lámpara de techo inteligente Varin® con ventilador - Bambú negro</h3>
-                            <p class="text-gray-600 mb-6 text-sm leading-relaxed">
-                                Una pieza de diseño única que fusiona la calidez de los materiales naturales con la más alta tecnología domótica. Los detalles en bambú tintado en negro aportan una estética sofisticada, ideal para ambientes rústico-modernos, nórdicos o japandi. Oculta en su diseño se encuentra toda la potencia de la iluminación regulable Varin y un silencioso ventilador integrado.
-                            </p>
-                            <ul class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-sm text-gray-700">
-                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i> <span><strong>Diseño Exclusivo:</strong> Carcasa y detalles decorativos en madera de bambú.</span></li>
-                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i> <span><strong>Funcionalidad Dual:</strong> Iluminación principal y flujo de aire en un solo dispositivo estético.</span></li>
-                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i> <span><strong>Ecosistema Tuya:</strong> Integración perfecta con el resto de la gama de productos Varin.</span></li>
-                                <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-0.5 mr-2"></i> <span><strong>Personalización:</strong> Escenas de luz configurables para lectura, relax o trabajo.</span></li>
-                            </ul>
-                            <div class="mt-6">
-                                <a href="https://www.mercadolibre.cl/pagina/varinlatam" target="_blank" class="inline-flex items-center px-6 py-2.5 bg-varin-accent text-white text-sm font-bold rounded-full hover:bg-blue-600 transition-colors shadow-sm">
-                                    <i class="fas fa-shopping-cart mr-2"></i> Comprar
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </section>
 
@@ -212,7 +187,6 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                
                 <!-- Product 5 -->
                 <div class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col group">
                     <div class="bg-gray-50 p-8 flex items-center justify-center border-b border-gray-100 relative h-64 overflow-hidden">
@@ -264,12 +238,11 @@
                         </div>
                         <div class="mt-6">
                             <a href="https://www.mercadolibre.cl/pagina/varinlatam" target="_blank" class="inline-flex items-center px-6 py-2.5 bg-varin-accent text-white text-sm font-bold rounded-full hover:bg-blue-600 transition-colors shadow-sm">
-                                <i class="fas fa-shopping-cart mr-2"></i> Comprar
+                                    <i class="fas fa-shopping-cart mr-2"></i> Comprar
                             </a>
                         </div>
                     </div>
                 </div>
-
             </div>
         </section>
 
@@ -283,11 +256,9 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                
                 <!-- Product 7 -->
                 <div class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
                     <div class="bg-gray-900 p-8 flex items-center justify-center border-b border-gray-800 h-64 overflow-hidden relative">
-                        <!-- Simulated heat glow effect -->
                         <div class="absolute inset-0 bg-gradient-to-t from-red-900/20 to-transparent"></div>
                         <div class="w-full max-w-[200px] aspect-[85/55] bg-black rounded-sm flex items-center justify-center text-gray-400 italic text-center p-2 img-container shadow-2xl border border-gray-700 z-10 text-xs">
                             <img src="https://varin.nl/cdn/shop/files/GlasspanelHeater_VA-G004_zwart_edits_2400x2400_crop_center.jpg?v=1762528543" alt="Calefactor Cristal Negro" class="w-full h-full object-contain rounded-sm">
@@ -318,7 +289,6 @@
                 <!-- Product 8 -->
                 <div class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
                     <div class="bg-gray-100 p-8 flex items-center justify-center border-b border-gray-200 h-64 overflow-hidden relative">
-                         <!-- Simulated heat glow effect -->
                          <div class="absolute inset-0 bg-gradient-to-t from-orange-100/50 to-transparent"></div>
                         <div class="w-full max-w-[200px] aspect-[85/55] bg-white rounded-sm flex items-center justify-center text-gray-500 italic text-center p-2 img-container shadow-xl border border-gray-200 z-10 text-xs">
                             <img src="https://varin.nl/cdn/shop/files/GlasspanelHeater_VA-G004_wit_edits_2400x2400_crop_center.jpg?v=1762528708" alt="Calefactor Cristal Blanco" class="w-full h-full object-contain mix-blend-multiply rounded-sm">
@@ -345,7 +315,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </section>
 
@@ -416,7 +385,6 @@
     <!-- Footer -->
     <footer class="bg-varin-primary text-gray-400 py-12 border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
-            <!-- Logo en el Footer -->
             <div class="mb-8">
                 <img src="https://varin.nl/cdn/shop/files/logo-varin_524x120.svg?v=1704292157" alt="Varin Logo Footer" class="h-10 w-auto opacity-80 brightness-0 invert">
             </div>
