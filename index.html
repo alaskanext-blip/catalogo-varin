@@ -559,9 +559,7 @@
                 </div>
                 
                 <div id="formContainer">
-                    <!-- Formulario con ID para JavaScript -->
-                    <form id="contactForm" action="https://formsubmit.co/contacto@widdex.com" method="POST" class="space-y-6">
-                        <!-- Configuraciones ocultas de FormSubmit -->
+                    <form id="contactForm" onsubmit="enviarFormulario(event)" class="space-y-6">
                         <input type="hidden" name="_subject" value="Nuevo mensaje desde Catálogo Varin">
                         <input type="hidden" name="_captcha" value="false">
                         <input type="hidden" name="_template" value="table">
@@ -634,54 +632,65 @@
         </div>
     </footer>
 
-    <!-- Script para enviar el formulario sin redireccionar -->
+    <!-- Script para enviar el formulario sin redireccionar usando JSON -->
     <script>
-        const contactForm = document.getElementById('contactForm');
-        const successMessage = document.getElementById('successMessage');
-        const submitBtn = document.getElementById('submitBtn');
-        const originalBtnText = submitBtn.innerHTML;
+        function enviarFormulario(e) {
+            e.preventDefault(); // Detiene la recarga nativa
+            
+            const contactForm = document.getElementById('contactForm');
+            const successMessage = document.getElementById('successMessage');
+            const submitBtn = document.getElementById('submitBtn');
+            const originalBtnText = submitBtn.innerHTML;
 
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault(); // Evita que la página se redireccione
-            
             const formData = new FormData(contactForm);
+            const dataObj = Object.fromEntries(formData.entries());
             
-            // UI: Cambiar botón a estado de carga
             submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Enviando...';
             submitBtn.disabled = true;
             submitBtn.classList.add('opacity-75', 'cursor-not-allowed', 'transform-none');
 
-            // Enviar usando el endpoint AJAX de FormSubmit
             fetch('https://formsubmit.co/ajax/contacto@widdex.com', {
                 method: 'POST',
-                body: formData,
                 headers: {
+                    'Content-Type': 'application/json',
                     'Accept': 'application/json'
-                }
+                },
+                body: JSON.stringify(dataObj)
             })
-            .then(response => response.json())
+            .then(response => {
+                // FormSubmit devuelve los errores como JSON también
+                return response.json();
+            })
             .then(data => {
                 if (data.success === 'true' || data.success === true) {
-                    // Ocultar form y mostrar mensaje de éxito
                     contactForm.style.display = 'none';
                     successMessage.classList.remove('hidden');
+                } else if (data.message && data.message.includes('web server')) {
+                    // MODO VISTA PREVIA: Captura el error específico de FormSubmit en archivos locales/Canvas
+                    // Muestra el mensaje de éxito para evaluar el diseño, pero avisa al usuario
+                    console.warn("Aviso de Vista Previa: El diseño se ha mostrado, pero el correo solo se enviará cuando se publique en un dominio web real.");
+                    contactForm.style.display = 'none';
+                    successMessage.classList.remove('hidden');
+                    alert("Aviso de Vista Previa: El formulario funciona correctamente visualmente, pero FormSubmit exige que la página esté publicada en un servidor web real (como Hostinger o Vercel) para entregar el correo electrónico real a contacto@widdex.com.");
                 } else {
-                    throw new Error(data.message || 'Error en el envío');
+                    throw new Error(data.message || 'Error desconocido');
                 }
             })
             .catch(error => {
-                alert('Hubo un problema de conexión al enviar tu mensaje. Por favor, intenta de nuevo.');
+                console.error('Error:', error);
+                alert('Hubo un problema de conexión al enviar tu mensaje. Asegúrate de tener activado el correo en tu bandeja.');
             })
             .finally(() => {
-                // Restaurar botón siempre al finalizar
                 submitBtn.innerHTML = originalBtnText;
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('opacity-75', 'cursor-not-allowed', 'transform-none');
             });
-        });
+        }
 
-        // Función para enviar otro mensaje
         function resetForm() {
+            const contactForm = document.getElementById('contactForm');
+            const successMessage = document.getElementById('successMessage');
+            
             contactForm.reset();
             contactForm.style.display = 'block';
             successMessage.classList.add('hidden');
