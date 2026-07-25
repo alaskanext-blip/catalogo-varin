@@ -2,33 +2,70 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Semáforo de Publicaciones</title>
+<title>Panel de Publicaciones</title>
 <style>
-  body { font-family: Arial, sans-serif; text-align: center; padding: 40px; background: #f4f4f4; }
-  h1 { color: #333; }
-  #ejecutar { padding: 12px 30px; font-size: 16px; cursor: pointer; border-radius: 8px; border: none; background: #2196F3; color: white; }
-  #resultado { margin-top: 30px; font-size: 22px; padding: 20px; border-radius: 10px; }
-  .verde { background: #C8E6C9; color: #2E7D32; }
-  .rojo { background: #FFCDD2; color: #C62828; }
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f7f9fc; color: #1a1a1a; padding: 50px 20px; }
+  .container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 40px; }
+  h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+  p.subtitle { color: #666; font-size: 14px; margin-bottom: 30px; }
+  #ejecutar { width: 100%; padding: 14px; font-size: 16px; font-weight: 600; border: none; border-radius: 10px; background: #1976D2; color: #fff; cursor: pointer; transition: background 0.2s; }
+  #ejecutar:hover { background: #1565C0; }
+  #resultado { margin-top: 25px; padding: 20px; border-radius: 10px; font-size: 17px; font-weight: 500; display: none; }
+  .verde { background: #E8F5E9; color: #2E7D32; border: 1px solid #A5D6A7; }
+  .rojo { background: #FFEBEE; color: #C62828; border: 1px solid #EF9A9A; }
+  .rojo a { color: #C62828; }
+  ul { margin-top: 10px; padding-left: 20px; font-size: 14px; }
+  footer { margin-top: 20px; font-size: 12px; color: #999; text-align: center; }
 </style>
 </head>
 <body>
-  <h1>🚦 Revisor de Publicaciones</h1>
-  <button id="ejecutar">Ejecutar</button>
+<div class="container">
+  <h1>🚦 Panel de Publicaciones</h1>
+  <p class="subtitle">Mercado Libre · Falabella · Sodimac</p>
+  <button id="ejecutar">Ejecutar revisión</button>
   <div id="resultado"></div>
+  <footer>Última revisión: <span id="fecha">—</span></footer>
+</div>
 
 <script>
-document.getElementById('ejecutar').addEventListener('click', () => {
-  // Datos de ejemplo (simulación de una revisión)
-  const problemas = []; // vacío = todo bien; agrega URLs para ver el estado rojo
+const urls = {
+  "Mercado Libre": [
+    "https://www.mercadolibre.cl/lampara-ventilador-de-techo-varin-tuya-wifi-blanco/up/MLCU3865883496",
+    "https://articulo.mercadolibre.cl/MLC-3546593078-lampara-ventilador-de-techo-varin-tuya-wifi-_JM",
+    "https://www.mercadolibre.cl/ventilador-de-techo-luz-led-wifi-tuya-black-design-varin/up/MLCU3760764352",
+    "https://www.mercadolibre.cl/ventilador-de-techo-lampara-smart-varin--bambu-negro-tuya/up/MLCU3760704596",
+    "https://www.mercadolibre.cl/caja-seguridad--inteligente-para-llaves-varin-bluetooth/up/MLCU3933887599",
+    "https://www.mercadolibre.cl/caja-seguridad-inteligente-para-llaves-varin-tuya-wifi/up/MLCU3933900229"
+  ],
+  "Falabella": [
+    "https://www.falabella.com/falabella-cl/product/153821447/Ventilador-De-Techo-Varin%C2%AE-Tuya%C2%AE-Wifi-Negro/153821450",
+    "https://www.falabella.com/falabella-cl/product/153759616/Ventilador-De-Techo-L%C3%A1mpara-Smart-Varin%C2%AE-Bamb%C3%BA-Negro-Tuya%C2%AE/153759617",
+    "https://www.falabella.com/falabella-cl/product/153781928/Caja-Fuerte-Inteligente-Para-Llaves-Varin%C2%AE-Tuya-Wifi/153781929",
+    "https://www.falabella.com/falabella-cl/product/153781626/caja-fuerte-inteligente-para-llaves-varin-bluetooth/153781627"
+  ],
+  "Sodimac": [
+    "https://www.sodimac.cl/sodimac-cl/articulo/153821447/Ventilador-De-Techo-Varin%C2%AE-Tuya%C2%AE-Wifi-Negro/153821450",
+    "https://www.sodimac.cl/sodimac-cl/articulo/153759616/Ventilador-De-Techo-L%C3%A1mpara-Smart-Varin%C2%AE-Bamb%C3%BA-Negro-Tuya%C2%AE/153759617",
+    "https://www.sodimac.cl/sodimac-cl/articulo/153781928/Caja-Fuerte-Inteligente-Para-Llaves-Varin%C2%AE-Tuya-Wifi/153781929",
+    "https://www.sodimac.cl/sodimac-cl/articulo/153781626/Caja-Fuerte-Inteligente-Para-Llaves-Varin%C2%AE-Bluetooth/153781627"
+  ]
+};
 
+document.getElementById('ejecutar').addEventListener('click', () => {
   const div = document.getElementById('resultado');
+  const problemas = []; // simulación: vacío = todo bien
+
+  document.getElementById('fecha').textContent = new Date().toLocaleString('es-CL');
+  div.style.display = "block";
+
   if (problemas.length === 0) {
     div.className = "verde";
     div.innerHTML = "🟢 Tranki Todo Bien!";
   } else {
     div.className = "rojo";
-    div.innerHTML = "🔴 Problemas detectados:<br>" + problemas.join("<br>");
+    div.innerHTML = "🔴 Se detectaron problemas:<ul>" +
+      problemas.map(p => `<li><a href="${p}" target="_blank">${p}</a></li>`).join("") + "</ul>";
   }
 });
 </script>
