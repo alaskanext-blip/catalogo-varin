@@ -1,168 +1,243 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajustes de Píxeles e Imagen</title>
+    <title>Editor y Redimensionador Masivo de Píxeles</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            max-width: 600px;
-            width: 100%;
-        }
-        h2 {
-            color: #0056b3;
-            margin-top: 0;
-        }
-        .section {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input[type="file"], input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .checkbox-group input {
-            width: auto;
-            margin-right: 10px;
-        }
-        button {
-            background-color: #0056b3;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #004494;
-        }
-        .preview {
-            margin-top: 20px;
-            text-align: center;
-        }
-        canvas {
-            max-width: 100%;
-            height: auto;
-            border: 1px dashed #ccc;
-            margin-top: 10px;
-        }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 h-full flex flex-col">
 
-<div class="container">
-    <h2>Herramienta: Ajustes de Píxeles</h2>
-    
-    <div class="section">
-        <label for="uploadImage">Cargar Imagen:</label>
-        <input type="file" id="uploadImage" accept="image/*">
-    </div>
+    <header class="bg-indigo-600 text-white shadow-md py-4 px-6 flex justify-between items-center">
+        <h1 class="text-xl font-bold flex items-center gap-2">
+            <span>⚙️</span> Redimensionador y Editor de Píxeles Masivo
+        </h1>
+        <span class="text-xs bg-indigo-500 py-1 px-3 rounded-full font-medium">Hasta 20 imágenes</span>
+    </header>
 
-    <div class="section">
-        <label for="maxWidth">Ancho Máximo / Específico (px):</label>
-        <input type="number" id="maxWidth" value="2000">
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-y-auto">
+        
+        <!-- Controls Panel -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-5 lg:col-span-1 h-fit">
+            <h2 class="text-lg font-semibold text-slate-700 border-b pb-2">Panel de Control Global</h2>
+            
+            <!-- Upload section -->
+            <div>
+                <label class="block text-sm font-medium text-slate-600 mb-2">Cargar Imágenes (Máx. 20)</label>
+                <input type="file" id="imageUpload" multiple accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                <p id="fileCountError" class="text-xs text-rose-500 mt-1 hidden">Solo puedes subir un máximo de 20 imágenes a la vez.</p>
+            </div>
 
-        <label for="maxHeight">Alto Máximo / Específico (px):</label>
-        <input type="number" id="maxHeight" value="2000">
+            <!-- Global pixel adjustments -->
+            <div class="flex flex-col gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Ajustes Masivos</span>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Ancho Objetivo (px)</label>
+                    <input type="number" id="globalWidth" placeholder="Ej. 1200" class="w-full p-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Alto Objetivo (px)</label>
+                    <input type="number" id="globalHeight" placeholder="Ej. 800" class="w-full p-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="globalKeepAspect" checked class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                    <label for="globalKeepAspect" class="text-xs font-medium text-slate-600">Mantener proporción original</label>
+                </div>
+                <button id="applyGlobalBtn" class="bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 px-4 rounded-xl text-sm transition-colors mt-1">
+                    Aplicar a Todas
+                </button>
+            </div>
 
-        <div class="checkbox-group">
-            <input type="checkbox" id="maintainAspectRatio" checked>
-            <label for="maintainAspectRatio" style="margin-bottom:0;">Mantener proporción original</label>
-        </div>
-    </div>
+            <!-- Action Buttons -->
+            <button id="downloadAllBtn" disabled class="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-colors shadow-sm flex items-center justify-center gap-2">
+                <span>⬇️</span> Descargar Todas Numeradas (Zip/Secuencial)
+            </button>
+        </section>
 
-    <button id="processBtn">Procesar y Ajustar Píxeles</button>
+        <!-- Image Grid List -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 lg:col-span-2 flex flex-col">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h2 class="text-lg font-semibold text-slate-700">Imágenes Cargadas</h2>
+                <span id="counterBadge" class="text-xs font-semibold bg-slate-100 text-slate-600 py-1 px-3 rounded-full">0 de 20 seleccionadas</span>
+            </div>
+            
+            <div id="imageList" class="flex-1 overflow-y-auto max-h-[600px] flex flex-col gap-4 pr-2">
+                <div id="emptyState" class="text-center py-16 text-slate-400 flex flex-col items-center justify-center gap-3">
+                    <span class="text-4xl">📂</span>
+                    <p class="text-sm">No hay imágenes cargadas todavía. Selecciona hasta 20 imágenes para comenzar.</p>
+                </div>
+            </div>
+        </section>
 
-    <div class="preview" id="previewSection" style="display:none;">
-        <h3>Resultado:</h3>
-        <canvas id="outputCanvas"></canvas>
-        <br><br>
-        <a id="downloadLink" download="imagen_ajustada.png">
-            <button style="background-color: #28a745;">Descargar Imagen</button>
-        </a>
-    </div>
-</div>
+    </main>
 
-<script>
-    const uploadImage = document.getElementById('uploadImage');
-    const maxWidthInput = document.getElementById('maxWidth');
-    const maxHeightInput = document.getElementById('maxHeight');
-    const maintainAspectRatio = document.getElementById('maintainAspectRatio');
-    const processBtn = document.getElementById('processBtn');
-    const previewSection = document.getElementById('previewSection');
-    const outputCanvas = document.getElementById('outputCanvas');
-    const downloadLink = document.getElementById('downloadLink');
+    <script>
+        let imagesData = [];
 
-    let loadedImage = new Image();
+        const imageUpload = document.getElementById('imageUpload');
+        const imageList = document.getElementById('imageList');
+        const emptyState = document.getElementById('emptyState');
+        const counterBadge = document.getElementById('counterBadge');
+        const fileCountError = document.getElementById('fileCountError');
+        const globalWidthInput = document.getElementById('globalWidth');
+        const globalHeightInput = document.getElementById('globalHeight');
+        const globalKeepAspect = document.getElementById('globalKeepAspect');
+        const applyGlobalBtn = document.getElementById('applyGlobalBtn');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
 
-    uploadImage.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                loadedImage.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
+        // Handle File Upload
+        imageUpload.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            fileCountError.classList.add('hidden');
+
+            if (files.length > 20) {
+                fileCountError.classList.remove('hidden');
+                imageUpload.value = '';
+                return;
+            }
+
+            imagesData = [];
+            imageList.innerHTML = '';
+
+            if (files.length === 0) {
+                emptyState.style.display = 'flex';
+                imageList.appendChild(emptyState);
+                counterBadge.textContent = '0 de 20 seleccionadas';
+                downloadAllBtn.disabled = true;
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            counterBadge.textContent = `${files.length} de 20 seleccionadas`;
+            downloadAllBtn.disabled = false;
+
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const itemObj = {
+                            id: index,
+                            file: file,
+                            name: file.name,
+                            imgElement: img,
+                            width: img.width,
+                            height: img.height,
+                            keepAspect: true
+                        };
+                        imagesData.push(itemObj);
+                        renderImageCard(itemObj, index + 1);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        function renderImageCard(item, number) {
+            const card = document.createElement('div');
+            card.className = "flex flex-col sm:flex-row items-center gap-4 bg-slate-50 border border-slate-200 p-4 rounded-xl shadow-xs";
+            card.setAttribute('data-id', item.id);
+
+            card.innerHTML = `
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <span class="bg-indigo-600 text-white font-bold text-xs w-7 h-7 rounded-full flex items-center justify-center shrink-0">#${number}</span>
+                    <img src="${item.imgElement.src}" class="w-16 h-16 object-cover rounded-lg border border-slate-300 shrink-0">
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-semibold text-slate-700 truncate max-w-[150px]" title="${item.name}">${item.name}</p>
+                        <p class="text-[10px] text-slate-500">Original: ${item.imgElement.width} × ${item.imgElement.height} px</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 w-full sm:w-auto flex-1">
+                    <div>
+                        <label class="block text-[10px] font-medium text-slate-500">Ancho (px)</label>
+                        <input type="number" value="${item.width}" data-field="width" data-id="${item.id}" class="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-medium text-slate-500">Alto (px)</label>
+                        <input type="number" value="${item.height}" data-field="height" data-id="${item.id}" class="w-full p-1.5 text-xs rounded-lg border border-slate-300 bg-white">
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto justify-end">
+                    <div class="flex items-center gap-1.5">
+                        <input type="checkbox" checked data-field="aspect" data-id="${item.id}" id="aspect_${item.id}" class="w-3.5 h-3.5 text-indigo-600 rounded border-slate-300">
+                        <label for="aspect_${item.id}" class="text-[10px] text-slate-500">Proporción</label>
+                    </div>
+                    <button data-action="download" data-id="${item.id}" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium px-3 py-1.5 rounded-lg text-xs transition-colors w-full sm:w-auto">
+                        Descargar
+                    </button>
+                </div>
+            `;
+
+            // Attach individual events inside card
+            const widthInput = card.querySelector(`[data-field="width"]`);
+            const heightInput = card.querySelector(`[data-field="height"]`);
+            const aspectCheckbox = card.querySelector(`[data-field="aspect"]`);
+            const downloadBtn = card.querySelector(`[data-action="download"]`);
+
+            widthInput.addEventListener('input', (e) => {
+                let val = parseInt(e.target.value) || 0;
+                item.width = val;
+                if (item.keepAspect && item.imgElement.width > 0) {
+                    let ratio = val / item.imgElement.width;
+                    item.height = Math.round(item.imgElement.height * ratio);
+                    heightInput.value = item.height;
+                }
+            });
+
+            heightInput.addEventListener('input', (e) => {
+                let val = parseInt(e.target.value) || 0;
+                item.height = val;
+                if (item.keepAspect && item.imgElement.height > 0) {
+                    let ratio = val / item.imgElement.height;
+                    item.width = Math.round(item.imgElement.width * ratio);
+                    widthInput.value = item.width;
+                }
+            });
+
+            aspectCheckbox.addEventListener('change', (e) => {
+                item.keepAspect = e.target.checked;
+            });
+
+            downloadBtn.addEventListener('click', () => {
+                processAndDownloadSingle(item, number);
+            });
+
+            imageList.appendChild(card);
         }
-    });
 
-    processBtn.addEventListener('click', () => {
-        if (!loadedImage.src) {
-            alert('Por favor, carga una imagen primero.');
-            return;
-        }
+        applyGlobalBtn.addEventListener('click', () => {
+            let gW = parseInt(globalWidthInput.value);
+            let gH = parseInt(globalHeightInput.value);
+            let keep = globalKeepAspect.checked;
 
-        let targetWidth = parseInt(maxWidthInput.value) || 2000;
-        let targetHeight = parseInt(maxHeightInput.value) || 2000;
-        let originalWidth = loadedImage.width;
-        let originalHeight = loadedImage.height;
+            if (!gW && !gH) return;
 
-        if (maintainAspectRatio.checked) {
-            let ratio = Math.min(targetWidth / originalWidth, targetHeight / originalHeight);
-            targetWidth = Math.round(originalWidth * ratio);
-            targetHeight = Math.round(originalHeight * ratio);
-        }
+            imagesData.forEach((item, index) => {
+                if (gW) item.width = gW;
+                if (gH) item.height = gH;
+                item.keepAspect = keep;
 
-        outputCanvas.width = targetWidth;
-        outputCanvas.height = targetHeight;
+                if (gW && keep && item.imgElement.width > 0) {
+                    let ratio = gW / item.imgElement.width;
+                    item.height = Math.round(item.imgElement.height * ratio);
+                } else if (gH && keep && item.imgElement.height > 0) {
+                    let ratio = gH / item.imgElement.height;
+                    item.width = Math.round(item.imgElement.width * ratio);
+                }
 
-        const ctx = outputCanvas.getContext('2d');
-        ctx.clearRect(0, 0, targetWidth, targetHeight);
-        ctx.drawImage(loadedImage, 0, 0, targetWidth, targetHeight);
-
-        previewSection.style.display = 'block';
-        downloadLink.href = outputCanvas.toDataURL('image/png');
-    });
-</script>
-
-</body>
-</html>
+                // Update inputs in DOM
+                const card = imageList.querySelector(`[data-id="${item.id}"]`);
+                if (card) {
+                    card.querySelector(`[data-field="width"]`).value = item.width;
+                    card.querySelector(`[data-field="height"]`).value = item.height;
+                    card.querySelector(`[data-field="aspect"]`).checked = item.keepAspect;
+                }
+            });
+        });
