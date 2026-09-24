@@ -12,7 +12,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 h-full flex flex-col">
 
-    <header class="bg-indigo-600 text-white shadow-md py-4 px-6 flex justify-between items-center">
+    <header class="bg-indigo-600 text-white shadow-md py-4 px-6 flex justify-between items-center shrink-0">
         <h1 class="text-xl font-bold flex items-center gap-2">
             <span>⚙️</span> Redimensionador y Editor de Píxeles Masivo
         </h1>
@@ -37,28 +37,27 @@
                 <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Ajustes Masivos</span>
                 <div>
                     <label class="block text-xs font-medium text-slate-600 mb-1">Ancho Objetivo (px)</label>
-                    <input type="number" id="globalWidth" placeholder="Ej. 1200" class="w-full p-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="number" id="globalWidth" placeholder="Ej. 1200" class="w-full p-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-slate-600 mb-1">Alto Objetivo (px)</label>
-                    <input type="number" id="globalHeight" placeholder="Ej. 800" class="w-full p-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="number" id="globalHeight" placeholder="Ej. 800" class="w-full p-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
                 </div>
                 <div class="flex items-center gap-2">
                     <input type="checkbox" id="globalKeepAspect" checked class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
                     <label for="globalKeepAspect" class="text-xs font-medium text-slate-600">Mantener proporción original</label>
                 </div>
-                <button id="applyGlobalBtn" class="bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 px-4 rounded-xl text-sm transition-colors mt-1">
+                <button id="applyGlobalBtn" class="bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 px-4 rounded-xl text-sm transition-colors mt-1 cursor-pointer">
                     Aplicar a Todas
                 </button>
             </div>
 
             <!-- Action Buttons -->
-            <button id="downloadAllBtn" disabled class="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-colors shadow-sm flex items-center justify-center gap-2">
-                <span>⬇️</span> Descargar Todas Numeradas (Zip/Secuencial)
+            <button id="downloadAllBtn" disabled class="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white font-semibold py-3 px-4 rounded-xl text-sm transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed">
+                <span>⬇️</span> Descargar Todas Numeradas (1, 2, 3...)
             </button>
         </section>
 
-        <!-- Image Grid List -->
         <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 lg:col-span-2 flex flex-col">
             <div class="flex justify-between items-center mb-4 border-b pb-2">
                 <h2 class="text-lg font-semibold text-slate-700">Imágenes Cargadas</h2>
@@ -101,11 +100,13 @@
             }
 
             imagesData = [];
-            imageList.innerHTML = '';
+            // Remove previous cards except empty state
+            Array.from(imageList.children).forEach(child => {
+                if (child.id !== 'emptyState') child.remove();
+            });
 
             if (files.length === 0) {
                 emptyState.style.display = 'flex';
-                imageList.appendChild(emptyState);
                 counterBadge.textContent = '0 de 20 seleccionadas';
                 downloadAllBtn.disabled = true;
                 return;
@@ -115,13 +116,15 @@
             counterBadge.textContent = `${files.length} de 20 seleccionadas`;
             downloadAllBtn.disabled = false;
 
+            let loadedCount = 0;
+
             files.forEach((file, index) => {
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     const img = new Image();
                     img.onload = () => {
                         const itemObj = {
-                            id: index,
+                            id: 'img_' + Date.now() + '_' + index,
                             file: file,
                             name: file.name,
                             imgElement: img,
@@ -130,7 +133,7 @@
                             keepAspect: true
                         };
                         imagesData.push(itemObj);
-                        renderImageCard(itemObj, index + 1);
+                        renderImageCard(itemObj, imagesData.length);
                     };
                     img.src = event.target.result;
                 };
@@ -167,15 +170,14 @@
                 <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto justify-end">
                     <div class="flex items-center gap-1.5">
                         <input type="checkbox" checked data-field="aspect" data-id="${item.id}" id="aspect_${item.id}" class="w-3.5 h-3.5 text-indigo-600 rounded border-slate-300">
-                        <label for="aspect_${item.id}" class="text-[10px] text-slate-500">Proporción</label>
+                        <label for="aspect_${item.id}" class="text-[10px] text-slate-500 cursor-pointer">Proporción</label>
                     </div>
-                    <button data-action="download" data-id="${item.id}" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium px-3 py-1.5 rounded-lg text-xs transition-colors w-full sm:w-auto">
+                    <button data-action="download" data-id="${item.id}" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium px-3 py-1.5 rounded-lg text-xs transition-colors w-full sm:w-auto cursor-pointer">
                         Descargar
                     </button>
                 </div>
             `;
 
-            // Attach individual events inside card
             const widthInput = card.querySelector(`[data-field="width"]`);
             const heightInput = card.querySelector(`[data-field="height"]`);
             const aspectCheckbox = card.querySelector(`[data-field="aspect"]`);
@@ -186,7 +188,7 @@
                 item.width = val;
                 if (item.keepAspect && item.imgElement.width > 0) {
                     let ratio = val / item.imgElement.width;
-                    item.height = Math.round(item.imgElement.height * ratio);
+                    item.height = Math.max(1, Math.round(item.imgElement.height * ratio));
                     heightInput.value = item.height;
                 }
             });
@@ -196,7 +198,7 @@
                 item.height = val;
                 if (item.keepAspect && item.imgElement.height > 0) {
                     let ratio = val / item.imgElement.height;
-                    item.width = Math.round(item.imgElement.width * ratio);
+                    item.width = Math.max(1, Math.round(item.imgElement.width * ratio));
                     widthInput.value = item.width;
                 }
             });
@@ -206,7 +208,8 @@
             });
 
             downloadBtn.addEventListener('click', () => {
-                processAndDownloadSingle(item, number);
+                const currentIndex = imagesData.findIndex(obj => obj.id === item.id) + 1;
+                processAndDownloadSingle(item, currentIndex);
             });
 
             imageList.appendChild(card);
@@ -219,20 +222,19 @@
 
             if (!gW && !gH) return;
 
-            imagesData.forEach((item, index) => {
+            imagesData.forEach((item) => {
                 if (gW) item.width = gW;
                 if (gH) item.height = gH;
                 item.keepAspect = keep;
 
                 if (gW && keep && item.imgElement.width > 0) {
                     let ratio = gW / item.imgElement.width;
-                    item.height = Math.round(item.imgElement.height * ratio);
+                    item.height = Math.max(1, Math.round(item.imgElement.height * ratio));
                 } else if (gH && keep && item.imgElement.height > 0) {
                     let ratio = gH / item.imgElement.height;
-                    item.width = Math.round(item.imgElement.width * ratio);
+                    item.width = Math.max(1, Math.round(item.imgElement.width * ratio));
                 }
 
-                // Update inputs in DOM
                 const card = imageList.querySelector(`[data-id="${item.id}"]`);
                 if (card) {
                     card.querySelector(`[data-field="width"]`).value = item.width;
@@ -241,3 +243,30 @@
                 }
             });
         });
+
+        function processAndDownloadSingle(item, number) {
+            const canvas = document.createElement('canvas');
+            canvas.width = item.width > 0 ? item.width : 100;
+            canvas.height = item.height > 0 ? item.height : 100;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(item.imgElement, 0, 0, canvas.width, canvas.height);
+
+            const link = document.createElement('a');
+            // Format name with number prefix (e.g., "1_imagen.png")
+            link.download = `${number}_${item.name}`;
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        downloadAllBtn.addEventListener('click', () => {
+            imagesData.forEach((item, index) => {
+                setTimeout(() => {
+                    processAndDownloadSingle(item, index + 1);
+                }, index * 400); // 400ms interval to prevent blocking multiple downloads in browsers
+            });
+        });
+    </script>
+</body>
+</html>
